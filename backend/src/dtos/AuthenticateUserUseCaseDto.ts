@@ -1,21 +1,21 @@
-import { IsEmail, IsJWT, IsStrongPassword } from "class-validator";
+import { IsEmail, IsString } from "class-validator";
 
 export class AuthenticateUserUseCaseInput {
   @IsEmail()
   email: string;
 
-  @IsStrongPassword()
+  @IsString()
   password: string;
 }
 
 export class AuthenticateUserUseCaseOutput {
-  @IsJWT()
+  @IsString()
   accessToken: string;
 
-  @IsJWT()
+  @IsString()
   refreshToken: string;
 
-  @IsJWT()
+  @IsString()
   identityToken: string;
 
   constructor({ accessToken, identityToken, refreshToken }) {

@@ -1,3 +1,4 @@
+import { IsEmail, IsString } from "class-validator";
 import { Password } from "../shared/password";
 import { Result } from "../shared/result";
 
@@ -10,11 +11,19 @@ type Props = {
   deletedAt?: Date | null;
 };
 
+export class UserDto {
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  name: string;
+}
+
 export class User {
-  readonly id: number;
+  readonly id?: number;
   private props: Props;
 
-  private constructor(props: Props, id: number) {
+  private constructor(props: Props, id?: number) {
     this.props = props;
     this.id = id;
   }
@@ -51,7 +60,14 @@ export class User {
     return this.props.password.isEqualTo(value);
   }
 
-  static create(props: Props, id: number): Result<User> {
+  static create(props: Props, id?: number): Result<User> {
     return Result.ok(new User(props, id));
+  }
+
+  toDto() {
+    const user = new UserDto();
+    user.email = this.email;
+    user.name = this.name;
+    return user;
   }
 }

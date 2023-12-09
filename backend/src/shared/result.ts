@@ -1,3 +1,6 @@
+import { Action, Interceptor, InterceptorInterface } from "routing-controllers";
+import { Service } from "typedi";
+
 export class Result<T> {
   public isSuccess: boolean;
   public isFailure: boolean;
@@ -43,5 +46,19 @@ export class Result<T> {
     fail: Result<unknown>,
   ): Result<U> {
     return new Result<U>(false, error + "\n" + fail.error);
+  }
+}
+
+@Interceptor()
+@Service()
+export class ResultInterceptor implements InterceptorInterface {
+  intercept(action: Action, result: unknown) {
+    if (!(result instanceof Result)) return result;
+    if (result.isFailure) {
+      action.response.status(400);
+      return { error: { message: result.error } };
+    }
+    action.response.status(200);
+    return result.getValue();
   }
 }

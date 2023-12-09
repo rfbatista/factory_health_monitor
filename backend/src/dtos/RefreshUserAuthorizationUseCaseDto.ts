@@ -1,15 +1,15 @@
-import { IsJWT } from "class-validator";
+import { IsString } from "class-validator";
 
 export class RefreshUserAuthorizationUseCaseInput {
-  @IsJWT()
+  @IsString()
   refreshToken: string;
 }
 
 export class RefreshUserAuthorizationUseCaseOutput {
-  @IsJWT()
+  @IsString()
   accessToken: string;
 
-  @IsJWT()
+  @IsString()
   identityToken: string;
 
   constructor({ accessToken, identityToken }) {

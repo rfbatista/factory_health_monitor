@@ -1,5 +1,5 @@
-import machineData from '../native-app/data/machineData.json';
-import {MachineType, partInfo} from '../native-app/data/types';
+import machineData from "../../native-app/data/machineData.json";
+import { MachineType, partInfo } from "../../native-app/data/types";
 
 const machineDataTyped = machineData as Record<
   MachineType,
@@ -35,11 +35,11 @@ export function calculatePartHealth(
     return 0; // Handle cases where the machine name is not found in machineData
   }
 
-  const {value} = part;
+  const { value } = part;
   if (!machineInfo[part.name]) {
     return -1;
   }
-  const {normalRange, abnormalRange, optimalRange} = machineInfo[part.name];
+  const { normalRange, abnormalRange, optimalRange } = machineInfo[part.name];
 
   if (value >= normalRange[0] && value <= normalRange[1]) {
     // Linearly scale the score between 50 and 100 based on the distance from normal to optimal

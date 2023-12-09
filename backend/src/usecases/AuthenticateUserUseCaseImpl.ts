@@ -14,6 +14,7 @@ import { Session } from "../shared/session";
 export class AuthenticateUserUseCaseImpl implements AuthenticateUserUseCase {
   @Inject(UserRepositoryToken)
   private userRepository: UserRepository;
+
   async execute(
     input: AuthenticateUserUseCaseInput,
   ): Promise<Result<AuthenticateUserUseCaseOutput>> {
