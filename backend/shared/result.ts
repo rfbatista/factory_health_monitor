@@ -22,12 +22,12 @@ export class Result<T> {
     Object.freeze(this);
   }
 
-  public getValue() {
+  public getValue<T>(): T {
     if (!this.isSuccess) {
       throw new Error(`Cant retrieve the value from a failed result.`);
     }
 
-    return this.value;
+    return this.value as T;
   }
 
   public static ok<U>(value?: U): Result<U> {
@@ -36,12 +36,5 @@ export class Result<T> {
 
   public static fail<U>(error: string): Result<U> {
     return new Result<U>(false, error);
-  }
-
-  public static combine(results: Result<any>[]): Result<any> {
-    for (let result of results) {
-      if (result.isFailure) return result;
-    }
-    return Result.ok<any>();
   }
 }

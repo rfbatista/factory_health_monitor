@@ -1,8 +1,8 @@
 -- CreateTable
 CREATE TABLE "machines" (
     "id" SERIAL NOT NULL,
-    "type" TEXT,
-    "code" TEXT,
+    "type" TEXT NOT NULL,
+    "code" TEXT NOT NULL,
     "created_at" TIMESTAMPTZ(6) DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(6),
     "deleted_at" TIMESTAMPTZ(6),
@@ -29,6 +29,7 @@ CREATE TABLE "machines_data_points" (
     "machine_data_type_id" INTEGER NOT NULL,
     "value" DOUBLE PRECISION NOT NULL,
     "created_at" TIMESTAMPTZ(6) DEFAULT CURRENT_TIMESTAMP,
+    "deleted_at" TIMESTAMPTZ(6),
 
     CONSTRAINT "machines_data_points_pkey" PRIMARY KEY ("id")
 );

@@ -12,8 +12,8 @@ datasource db {
 
 model Machines {
   id         Int       @id @default(autoincrement())
-  type       String?
-  code       String?
+  type       String
+  code       String
   created_at DateTime? @default(now()) @db.Timestamptz(6)
   updated_at DateTime? @updatedAt @db.Timestamptz(6)
   deleted_at DateTime? @db.Timestamptz(6)
@@ -44,6 +44,7 @@ model MachinesDataPoints {
   machines_data_type   MachinesDataType @relation(fields: [machine_data_type_id], references: [id])
   value                Float
   created_at           DateTime?        @default(now()) @db.Timestamptz(6)
+  deleted_at DateTime? @db.Timestamptz(6)
 
   @@map("machines_data_points")
 }
