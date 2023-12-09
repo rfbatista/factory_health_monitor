@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { Inject } from "typedi";
+import { Inject, Service } from "typedi";
 import { MachineDataPoint } from "../entities/MachineDataPoint";
 import { prisma } from "../infrastructure/database";
 import { Logger, LoggerToken } from "../ports/infrastructure";
@@ -7,6 +7,7 @@ import { MachineDataPointsRepository } from "../ports/repositories";
 import { Pagination } from "../shared/pagination";
 import { Result } from "../shared/result";
 
+@Service()
 export class MachineDataPointRepositoryImpl
   implements MachineDataPointsRepository
 {
@@ -16,7 +17,7 @@ export class MachineDataPointRepositoryImpl
   private log!: Logger;
 
   constructor() {
-    this.database = prisma.machines;
+    this.database = prisma.machinesDataPoints;
   }
   async create(entity: MachineDataPoint): Promise<Result<MachineDataPoint>> {
     const machineCreated = await this.database.create({
@@ -27,7 +28,15 @@ export class MachineDataPointRepositoryImpl
         created_at: entity.props.createdAt,
       },
     });
-    return MachineDataPoint.create(machineCreated, machineCreated.id);
+    return MachineDataPoint.create(
+      {
+        machineDataTypeId: machineCreated.machine_data_type_id,
+        machineId: machineCreated.machine_id,
+        value: machineCreated.value,
+        createdAt: machineCreated.created_at,
+      },
+      machineCreated.id,
+    );
   }
 
   async delete(id: number): Promise<Result<MachineDataPoint>> {
@@ -39,7 +48,15 @@ export class MachineDataPointRepositoryImpl
         deleted_at: new Date(),
       },
     });
-    return MachineDataPoint.create(machineDeleted, machineDeleted.id);
+    return MachineDataPoint.create(
+      {
+        machineDataTypeId: machineDeleted.machine_data_type_id,
+        machineId: machineDeleted.machine_id,
+        value: machineDeleted.value,
+        createdAt: machineDeleted.created_at,
+      },
+      machineDeleted.id,
+    );
   }
 
   async getById(id: number): Promise<Result<MachineDataPoint>> {
@@ -49,8 +66,18 @@ export class MachineDataPointRepositoryImpl
         deleted_at: null,
       },
     });
-    if (machine === null) return Result.fail("failed to create machine data point");
-    return MachineDataPoint.create(machine, machine.id);
+    if (machine === null)
+      return Result.fail("failed to create machine data point");
+
+    return MachineDataPoint.create(
+      {
+        machineDataTypeId: machine.machine_data_type_id,
+        machineId: machine.machine_id,
+        value: machine.value,
+        createdAt: machine.created_at,
+      },
+      machine.id,
+    );
   }
 
   async list(
@@ -70,12 +97,20 @@ export class MachineDataPointRepositoryImpl
     const total = result[0];
     const machines: MachineDataPoint[] = [];
     for (const machine of result[1]) {
-      const entityOrError = MachineDataPoint.create(machine, machine.id);
+      const entityOrError = MachineDataPoint.create(
+        {
+          machineDataTypeId: machine.machine_data_type_id,
+          machineId: machine.machine_id,
+          value: machine.value,
+          createdAt: machine.created_at,
+        },
+        machine.id,
+      );
       if (entityOrError.isFailure) {
         this.log.error("invalid machine data point in database", entityOrError);
         continue;
       }
-      machines.push(entityOrError.getValue<MachineDataPoint>());
+      machines.push(entityOrError.getValue());
     }
     return Pagination.create<MachineDataPoint>(machines, { total });
   }

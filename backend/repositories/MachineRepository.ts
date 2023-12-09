@@ -4,9 +4,10 @@ import { prisma } from "../infrastructure/database";
 import { MachineRepository } from "../ports/repositories";
 import { Pagination } from "../shared/pagination";
 import { Result } from "../shared/result";
-import { Inject } from "typedi";
+import { Inject, Service } from "typedi";
 import { Logger, LoggerToken } from "../ports/infrastructure";
 
+@Service()
 export class MachineRepositoryImpl implements MachineRepository {
   private database: Prisma.MachinesDelegate;
 
@@ -16,6 +17,7 @@ export class MachineRepositoryImpl implements MachineRepository {
   constructor() {
     this.database = prisma.machines;
   }
+
   async create(entity: Machine): Promise<Result<Machine>> {
     const machineCreated = await this.database.create({
       data: {
@@ -26,7 +28,15 @@ export class MachineRepositoryImpl implements MachineRepository {
         deleted_at: entity.props.deletedAt,
       },
     });
-    return Machine.create(machineCreated, machineCreated.id);
+    return Machine.create(
+      {
+        ...machineCreated,
+        createdAt: machineCreated.created_at,
+        updatedAt: machineCreated.updated_at,
+        deletedAt: machineCreated.deleted_at,
+      },
+      machineCreated.id,
+    );
   }
   async delete(id: number): Promise<Result<Machine>> {
     const machineDeleted = await this.database.update({
@@ -37,7 +47,15 @@ export class MachineRepositoryImpl implements MachineRepository {
         deleted_at: new Date(),
       },
     });
-    return Machine.create(machineDeleted, machineDeleted.id);
+    return Machine.create(
+      {
+        ...machineDeleted,
+        createdAt: machineDeleted.created_at,
+        updatedAt: machineDeleted.updated_at,
+        deletedAt: machineDeleted.deleted_at,
+      },
+      machineDeleted.id,
+    );
   }
   async update(entity: Machine): Promise<Result<Machine>> {
     const machineUpdated = await this.database.update({
@@ -52,7 +70,16 @@ export class MachineRepositoryImpl implements MachineRepository {
         deleted_at: entity.props.deletedAt,
       },
     });
-    return Machine.create(machineUpdated, machineUpdated.id);
+
+    return Machine.create(
+      {
+        ...machineUpdated,
+        createdAt: machineUpdated.created_at,
+        updatedAt: machineUpdated.updated_at,
+        deletedAt: machineUpdated.deleted_at,
+      },
+      machineUpdated.id,
+    );
   }
   async getById(id: number): Promise<Result<Machine>> {
     const machine = await this.database.findUnique({
@@ -62,7 +89,15 @@ export class MachineRepositoryImpl implements MachineRepository {
       },
     });
     if (machine === null) return Result.fail("failed to create machine");
-    return Machine.create(machine, machine.id);
+    return Machine.create(
+      {
+        ...machine,
+        createdAt: machine.created_at,
+        updatedAt: machine.updated_at,
+        deletedAt: machine.deleted_at,
+      },
+      machine.id,
+    );
   }
 
   async list(take: number, skip: number): Promise<Result<Pagination<Machine>>> {
@@ -79,12 +114,20 @@ export class MachineRepositoryImpl implements MachineRepository {
     const total = result[0];
     const machines: Machine[] = [];
     for (const machine of result[1]) {
-      const entityOrError = Machine.create(machine, machine.id);
+      const entityOrError = Machine.create(
+        {
+          ...machine,
+          createdAt: machine.created_at,
+          updatedAt: machine.updated_at,
+          deletedAt: machine.deleted_at,
+        },
+        machine.id,
+      );
       if (entityOrError.isFailure) {
         this.log.error("invalid machine in database", entityOrError);
         continue;
       }
-      machines.push(entityOrError.getValue<Machine>());
+      machines.push(entityOrError.getValue());
     }
     return Pagination.create<Machine>(machines, { total });
   }

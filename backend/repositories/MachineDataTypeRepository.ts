@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { Inject } from "typedi";
+import { Inject, Service } from "typedi";
 import { MachineDataType } from "../entities/MachineDataType";
 import { prisma } from "../infrastructure/database";
 import { Logger, LoggerToken } from "../ports/infrastructure";
@@ -7,6 +7,7 @@ import { MachineDataTypesRepository } from "../ports/repositories";
 import { Pagination } from "../shared/pagination";
 import { Result } from "../shared/result";
 
+@Service()
 export class MachineDataTypeRepositoryImpl
   implements MachineDataTypesRepository
 {
@@ -18,6 +19,7 @@ export class MachineDataTypeRepositoryImpl
   constructor() {
     this.database = prisma.machinesDataType;
   }
+
   async create(entity: MachineDataType): Promise<Result<MachineDataType>> {
     const machineCreated = await this.database.create({
       data: {
@@ -28,8 +30,17 @@ export class MachineDataTypeRepositoryImpl
         deleted_at: entity.props.deletedAt,
       },
     });
-    return MachineDataType.create(machineCreated, machineCreated.id);
+    return MachineDataType.create(
+      {
+        ...machineCreated,
+        createdAt: machineCreated.created_at,
+        updatedAt: machineCreated.updated_at,
+        deletedAt: machineCreated.deleted_at,
+      },
+      machineCreated.id,
+    );
   }
+
   async delete(id: number): Promise<Result<MachineDataType>> {
     const machineDeleted = await this.database.update({
       where: {
@@ -39,8 +50,17 @@ export class MachineDataTypeRepositoryImpl
         deleted_at: new Date(),
       },
     });
-    return MachineDataType.create(machineDeleted, machineDeleted.id);
+    return MachineDataType.create(
+      {
+        ...machineDeleted,
+        createdAt: machineDeleted.created_at,
+        updatedAt: machineDeleted.updated_at,
+        deletedAt: machineDeleted.deleted_at,
+      },
+      machineDeleted.id,
+    );
   }
+
   async update(entity: MachineDataType): Promise<Result<MachineDataType>> {
     const machineUpdated = await this.database.update({
       where: {
@@ -54,17 +74,35 @@ export class MachineDataTypeRepositoryImpl
         deleted_at: entity.props.deletedAt,
       },
     });
-    return MachineDataType.create(machineUpdated, machineUpdated.id);
+    return MachineDataType.create(
+      {
+        ...machineUpdated,
+        createdAt: machineUpdated.created_at,
+        updatedAt: machineUpdated.updated_at,
+        deletedAt: machineUpdated.deleted_at,
+      },
+      machineUpdated.id,
+    );
   }
+
   async getById(id: number): Promise<Result<MachineDataType>> {
     const machine = await this.database.findUnique({
       where: {
         id,
-        deleted_at: null
+        deleted_at: null,
       },
     });
-    if (machine === null) return Result.fail("failed to create machine data type");
-    return MachineDataType.create(machine, machine.id);
+    if (machine === null)
+      return Result.fail("failed to create machine data type");
+    return MachineDataType.create(
+      {
+        ...machine,
+        createdAt: machine.created_at,
+        updatedAt: machine.updated_at,
+        deletedAt: machine.deleted_at,
+      },
+      machine.id,
+    );
   }
 
   async list(
@@ -77,19 +115,27 @@ export class MachineDataTypeRepositoryImpl
         take,
         skip,
         where: {
-          deleted_at: null
-        }
+          deleted_at: null,
+        },
       }),
     ]);
     const total = result[0];
     const machines: MachineDataType[] = [];
     for (const machine of result[1]) {
-      const entityOrError = MachineDataType.create(machine, machine.id);
+      const entityOrError = MachineDataType.create(
+        {
+          ...machine,
+          createdAt: machine.created_at,
+          updatedAt: machine.updated_at,
+          deletedAt: machine.deleted_at,
+        },
+        machine.id,
+      );
       if (entityOrError.isFailure) {
         this.log.error("invalid machine data type in database", entityOrError);
         continue;
       }
-      machines.push(entityOrError.getValue<MachineDataType>());
+      machines.push(entityOrError.getValue());
     }
     return Pagination.create<MachineDataType>(machines, { total });
   }

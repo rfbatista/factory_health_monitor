@@ -7,6 +7,8 @@ import { MachineDataTypeRepositoryImpl } from "../repositories/MachineDataTypeRe
 import { MachineRepositoryImpl } from "../repositories/MachineRepository";
 import { Pagination } from "../shared/pagination";
 import { Result } from "../shared/result";
+import { User } from "../entities/User";
+import { UserRepositoryImpl } from "../repositories/UserRepository";
 
 export const MachineRepositoryToken = new Token("MachineRepository");
 export const MachineDataTypeRepositoryToken = new Token(
@@ -15,6 +17,7 @@ export const MachineDataTypeRepositoryToken = new Token(
 export const MachineDataPointRepositoryToken = new Token(
   "MachineDataPointsRepository",
 );
+export const UserRepositoryToken = new Token("UserRepositoryToken");
 
 Container.set<MachineRepository>(
   MachineRepositoryToken,
@@ -27,6 +30,10 @@ Container.set(
 Container.set(
   MachineDataPointRepositoryToken,
   Container.get<MachineDataPointsRepository>(MachineDataPointRepositoryImpl),
+);
+Container.set(
+  UserRepositoryToken,
+  Container.get<UserRepository>(UserRepositoryImpl),
 );
 
 export interface MachineRepository {
@@ -56,4 +63,9 @@ export interface MachineDataPointsRepository {
     take: number,
     skip: number,
   ): Promise<Result<Pagination<MachineDataPoint>>>;
+}
+
+export interface UserRepository {
+  create(entity: User): Promise<Result<User>>;
+  getByEmail(email: string): Promise<Result<User>>;
 }

@@ -22,7 +22,7 @@ export class Result<T> {
     Object.freeze(this);
   }
 
-  public getValue<T>(): T {
+  public getValue(): T {
     if (!this.isSuccess) {
       throw new Error(`Cant retrieve the value from a failed result.`);
     }
@@ -36,5 +36,12 @@ export class Result<T> {
 
   public static fail<U>(error: string): Result<U> {
     return new Result<U>(false, error);
+  }
+
+  public static combineError<U>(
+    error: string,
+    fail: Result<unknown>,
+  ): Result<U> {
+    return new Result<U>(false, error + "\n" + fail.error);
   }
 }
