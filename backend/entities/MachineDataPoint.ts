@@ -4,8 +4,8 @@ type Props = {
   machineId: number;
   machineDataTypeId: number;
   value: number;
-  createdAt: Date;
-  deletedAt: Date;
+  createdAt?: Date | null;
+  deletedAt?: Date | null;
 };
 
 export class MachineDataPoint {
