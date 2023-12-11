@@ -35,3 +35,8 @@ yarn start
 ├── data                Stores JSON files with machine and part data for evaluation
 └── shared              Some concepts that are shared across the application, Ex.: User session
 ```
+
+# Next steps
+- Finish the data state managment
+- Move all machine data interface from client storage to use backend api
+- Improve the ui style
