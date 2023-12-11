@@ -44,15 +44,15 @@ yarn start
 
 The architeture for this application is based on Hexagonal Architecture, it brings responsibility segregation and make it easier to evolve the architecture as business rule change, that is why I choose to go with this.
 
-()[./architecture.png]
+[](./architecture.png)
 
 ```
 ├── app.ts              Application entrypoint
 ├── controllers         REST Controllers
 ├── dtos                Data transfer objects
 ├── entities            Application entities: encapsulate business logics and resource representation
-├── usecases            Application usecases: encapsulate business logics and resources managment 
-├── errors.ts           A map of applications errors 
+├── usecases            Application usecases: encapsulate business logics and resources managment
+├── errors.ts           A map of applications errors
 ├── infrastructure      Application adapter: databases, loggers, events e etc
 ├── ports               Ports are interface that stabilish a contract beetween parts of the system
 ├── repositories        Isolate datalayer from the rest of application
@@ -62,14 +62,17 @@ The architeture for this application is based on Hexagonal Architecture, it brin
 # Authentication and Authorization
 
 You need to log in the application to grant access to other endpoints. First create a user:
+
 ```
 /api/v1/user/create
 {
   "email": "teste@teste.com",
   "password": "teste"
-} 
+}
 ```
+
 After the user is created you can log in the application:
+
 ```
 /api/v1/auth/signin
 {
@@ -79,6 +82,7 @@ After the user is created you can log in the application:
 ```
 
 You will receive three different types of JWT tokens.
+
 ```
 {
   "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RlQHRlc3RlLmNvbSIsImlhdCI6MTcwMjI3MDU3NCwiZXhwIjoxNzAyMjc3Nzc0fQ.d4k_ayo5hLvcXvlfAPq5n98N9ZIml9ICwP8VwrIAuOE",
@@ -87,8 +91,9 @@ You will receive three different types of JWT tokens.
 }
 ```
 
-The *accessToken* you have to send in the *Authorization* header as *Bearer* token.
-The accessToken have a limited life time, at this time the api will return a 401 HTTP status code, to renew you need to use the *refreshToken*
+The _accessToken_ you have to send in the _Authorization_ header as _Bearer_ token.
+The accessToken have a limited life time, at this time the api will return a 401 HTTP status code, to renew you need to use the _refreshToken_
+
 ```
 /api/v1/auth/refresh
 {
