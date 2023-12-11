@@ -37,6 +37,6 @@ yarn start
 ```
 
 # Next steps
-- Finish the data state managment
+- Create a store to manage the application data, could be a zustantd or redux
 - Move all machine data interface from client storage to use backend api
 - Improve the ui style
