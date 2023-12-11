@@ -1,4 +1,4 @@
-import { Body, JsonController, Post } from "routing-controllers";
+import { Authorized, Body, JsonController, Post } from "routing-controllers";
 import {
   AuthenticateUserUseCaseInput,
   AuthenticateUserUseCaseOutput,
@@ -9,7 +9,7 @@ import { AuthenticateUserUseCaseImpl } from "src/usecases/AuthenticateUserUseCas
 import { RefreshUserAuthorizationUseCaseImpl } from "src/usecases/RefreshUserAuthorizationUseCaseImpl";
 import { Service } from "typedi";
 
-@JsonController("/v1")
+@JsonController("/v1/auth")
 @Service()
 export class AuthController {
   constructor(
@@ -18,7 +18,8 @@ export class AuthController {
   ) {}
   @Post("/signin")
   async authenticate(
-    @Body({required: true, validate: true}) input: AuthenticateUserUseCaseInput,
+    @Body({ required: true, validate: true })
+    input: AuthenticateUserUseCaseInput,
   ): Promise<Result<AuthenticateUserUseCaseOutput>> {
     try {
       const r = await this.authenticateUser.execute(input);
@@ -29,6 +30,7 @@ export class AuthController {
     }
   }
 
+  @Authorized()
   @Post("/refresh")
   async refreshAuthentication(
     @Body() input: RefreshUserAuthorizationUseCaseInput,

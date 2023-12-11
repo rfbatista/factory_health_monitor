@@ -6,6 +6,7 @@ import { Logger, LoggerToken } from "../ports/infrastructure";
 import { MachineDataTypesRepository } from "../ports/repositories";
 import { Pagination } from "../shared/pagination";
 import { Result } from "../shared/result";
+import { ERRORS_CODE } from "src/errors";
 
 @Service()
 export class MachineDataTypeRepositoryImpl
@@ -18,6 +19,24 @@ export class MachineDataTypeRepositoryImpl
 
   constructor() {
     this.database = prisma.machinesDataType;
+  }
+
+  async getByName(name: string): Promise<Result<MachineDataType>> {
+    const machineFound = await this.database.findFirst({
+      where: {
+        name,
+      },
+    });
+    if (machineFound == null) return Result.fail(ERRORS_CODE.machine_data_type_not_found);
+    return MachineDataType.create(
+      {
+        ...machineFound,
+        createdAt: machineFound.created_at,
+        updatedAt: machineFound.updated_at,
+        deletedAt: machineFound.deleted_at,
+      },
+      machineFound.id,
+    );
   }
 
   async create(entity: MachineDataType): Promise<Result<MachineDataType>> {

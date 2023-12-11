@@ -2,7 +2,7 @@ import { Result } from "../shared/result";
 
 type Props = {
   type: string;
-  code: string;
+  name: string;
   createdAt?: Date | null;
   updatedAt?: Date | null;
   deletedAt?: Date | null;
@@ -17,7 +17,7 @@ export class Machine {
     this.id = id;
   }
 
-  static create(props: Props, id: number): Result<Machine> {
+  static create(props: Props, id?: number): Result<Machine> {
     return Result.ok(new Machine(props, id));
   }
 }

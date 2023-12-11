@@ -6,23 +6,40 @@ import { Pagination } from "../shared/pagination";
 import { Result } from "../shared/result";
 import { Inject, Service } from "typedi";
 import { Logger, LoggerToken } from "../ports/infrastructure";
+import { ERRORS_CODE } from "src/errors";
 
 @Service()
 export class MachineRepositoryImpl implements MachineRepository {
   private database: Prisma.MachinesDelegate;
-
   @Inject(LoggerToken)
   private log!: Logger;
 
   constructor() {
     this.database = prisma.machines;
   }
+  async getByName(name: string): Promise<Result<Machine>> {
+    const machineFound = await this.database.findFirst({
+      where: {
+        name,
+      },
+    });
+    if (machineFound == null) return Result.fail(ERRORS_CODE.machine_not_found);
+    return Machine.create(
+      {
+        ...machineFound,
+        createdAt: machineFound.created_at,
+        updatedAt: machineFound.updated_at,
+        deletedAt: machineFound.deleted_at,
+      },
+      machineFound.id,
+    );
+  }
 
   async create(entity: Machine): Promise<Result<Machine>> {
     const machineCreated = await this.database.create({
       data: {
         type: entity.props.type,
-        code: entity.props.code,
+        name: entity.props.name,
         created_at: entity.props.createdAt,
         updated_at: entity.props.updatedAt,
         deleted_at: entity.props.deletedAt,
@@ -64,7 +81,7 @@ export class MachineRepositoryImpl implements MachineRepository {
       },
       data: {
         type: entity.props.type,
-        code: entity.props.code,
+        name: entity.props.name,
         created_at: entity.props.createdAt,
         updated_at: entity.props.updatedAt,
         deleted_at: entity.props.deletedAt,

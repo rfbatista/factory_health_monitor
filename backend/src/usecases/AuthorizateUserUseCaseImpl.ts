@@ -23,6 +23,7 @@ export class AuthorizateUserUseCaseImpl implements AuthorizateUserUseCase {
       const session = Session.fromJwt(jwtPayload);
       return Result.ok(new AuthorizateUserUseCaseOutput({ session }));
     } catch (e) {
+      console.log("falha ao verificar o token", e);
       return Result.fail("invalid access token");
     }
   }

@@ -37,6 +37,7 @@ Container.set(
 );
 
 export interface MachineRepository {
+  getByName(name: string): Promise<Result<Machine>>;
   create(entity: Machine): Promise<Result<Machine>>;
   delete(id: number): Promise<Result<Machine>>;
   update(entity: Machine): Promise<Result<Machine>>;
@@ -45,6 +46,7 @@ export interface MachineRepository {
 }
 
 export interface MachineDataTypesRepository {
+  getByName(name: string): Promise<Result<MachineDataType>>;
   create(entity: MachineDataType): Promise<Result<MachineDataType>>;
   delete(id: number): Promise<Result<MachineDataType>>;
   update(entity: MachineDataType): Promise<Result<MachineDataType>>;

@@ -8,6 +8,13 @@ type Props = {
   deletedAt?: Date | null;
 };
 
+export class MachineDataPointDto {
+  id: number;
+  value: number;
+  createdAt?: Date | null;
+  deletedAt?: Date | null;
+}
+
 export class MachineDataPoint {
   readonly id: number;
   readonly props: Props;
@@ -17,7 +24,15 @@ export class MachineDataPoint {
     this.id = id;
   }
 
-  static create(props: Props, id: number): Result<MachineDataPoint> {
+  static create(props: Props, id?: number): Result<MachineDataPoint> {
     return Result.ok(new MachineDataPoint(props, id));
+  }
+
+  toDto(): MachineDataPointDto {
+    const dto = new MachineDataPointDto();
+    dto.id = this.id;
+    dto.value = this.props.value;
+    dto.createdAt = this.props.createdAt;
+    return dto;
   }
 }

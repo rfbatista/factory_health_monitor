@@ -17,7 +17,7 @@ export class MachineDataType {
     this.id = id;
   }
 
-  static create(props: Props, id: number): Result<MachineDataType> {
+  static create(props: Props, id?: number): Result<MachineDataType> {
     return Result.ok(new MachineDataType(props, id));
   }
 }
