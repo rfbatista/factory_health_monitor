@@ -44,7 +44,7 @@ yarn start
 
 The architeture for this application is based on Hexagonal Architecture, it brings responsibility segregation and make it easier to evolve the architecture as business rule change, that is why I choose to go with this.
 
-[](./architecture.png)
+![Architecture](./architecture.png)
 
 ```
 ├── app.ts              Application entrypoint
