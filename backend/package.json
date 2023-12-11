@@ -7,7 +7,7 @@
     "start": "nodemon --exec ts-node -r tsconfig-paths/register src/app.ts",
     "prisma:migrate": "npx prisma generate && npx prisma migrate dev",
     "test:int": "jest --c ./jest.config.ts",
-    "test": "jest",
+    "test": "jest --c ./jest.config.ts",
     "deploy": "ntl deploy --prod",
     "build": "tsc"
   },
@@ -20,6 +20,7 @@
     "body-parser": "^1.20.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
+    "dotenv": "^16.3.1",
     "express": "^4.17.1",
     "express-session": "^1.17.3",
     "jest-module-name-mapper": "^0.1.5",
